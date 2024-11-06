@@ -34,8 +34,6 @@ export default function Chat(props: { apiKeyApp: string }) {
   // Loading state
   const [loading, setLoading] = useState<boolean>(false);
 
-  // API Key
-  // const [apiKey, setApiKey] = useState<string>(apiKeyApp);
   const borderColor = useColorModeValue('gray.200', 'whiteAlpha.200');
   const inputColor = useColorModeValue('navy.700', 'white');
   const iconColor = useColorModeValue('brand.500', 'white');
@@ -55,98 +53,48 @@ export default function Chat(props: { apiKeyApp: string }) {
     { color: 'gray.500' },
     { color: 'whiteAlpha.600' },
   );
+
   const handleTranslate = async () => {
-    let apiKey = localStorage.getItem('apiKey');
     setInputOnSubmit(inputCode);
 
-    // Chat post conditions(maximum number of characters, valid message etc.)
-    const maxCodeLength = model === 'gpt-4o' ? 700 : 700;
-
-    if (!apiKey?.includes('sk-')) {
-      alert('Please enter an API key.');
-      return;
-    }
-
     if (!inputCode) {
-      alert('Please enter your message.');
+      alert('Por favor, insira sua pergunta.');
       return;
     }
 
-    if (inputCode.length > maxCodeLength) {
-      alert(
-        `Please enter code less than ${maxCodeLength} characters. You are currently at ${inputCode.length} characters.`,
-      );
-      return;
-    }
     setOutputCode(' ');
     setLoading(true);
-    const controller = new AbortController();
-    const body: ChatBody = {
-      inputCode,
-      model,
-      apiKey,
+
+    const payload = {
+      message: inputCode,
     };
 
-    // -------------- Fetch --------------
-    const response = await fetch('./api/chatAPI', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      signal: controller.signal,
-      body: JSON.stringify(body),
-    });
+    try {
+      const response = await fetch('http://147.79.111.214:5000/chatbot/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': 'b7fe1fd2-7074-4ae0-95ec-23f637695b87',
+        },
+        body: JSON.stringify(payload),
+      });
 
-    if (!response.ok) {
-      setLoading(false);
-      if (response) {
-        alert(
-          'Something went wrong went fetching from the API. Make sure to use a valid API key.',
-        );
+      if (!response.ok) {
+        setLoading(false);
+        alert('Falha na comunicação com o coach de IA.');
+        return;
       }
-      return;
-    }
 
-    const data = response.body;
-
-    if (!data) {
+      const data = await response.json();
+      const coachAnswer = data.response || 'Sem resposta';
+      setOutputCode(coachAnswer);
+    } catch (error) {
       setLoading(false);
-      alert('Something went wrong');
-      return;
-    }
-
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    let done = false;
-
-    while (!done) {
-      setLoading(true);
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      const chunkValue = decoder.decode(value);
-      setOutputCode((prevCode) => prevCode + chunkValue);
+      
     }
 
     setLoading(false);
   };
-  // -------------- Copy Response --------------
-  // const copyToClipboard = (text: string) => {
-  //   const el = document.createElement('textarea');
-  //   el.value = text;
-  //   document.body.appendChild(el);
-  //   el.select();
-  //   document.execCommand('copy');
-  //   document.body.removeChild(el);
-  // };
-
-  // *** Initializing apiKey with .env.local value
-  // useEffect(() => {
-  // ENV file verison
-  // const apiKeyENV = process.env.NEXT_PUBLIC_OPENAI_API_KEY
-  // if (apiKey === undefined || null) {
-  //   setApiKey(apiKeyENV)
-  // }
-  // }, [])
 
   const handleChange = (Event: any) => {
     setInputCode(Event.target.value);
@@ -159,14 +107,6 @@ export default function Chat(props: { apiKeyApp: string }) {
       direction="column"
       position="relative"
     >
-      <Img
-        src={Bg.src}
-        position={'absolute'}
-        w="350px"
-        left="50%"
-        top="50%"
-        transform={'translate(-50%, -50%)'}
-      />
       <Flex
         direction="column"
         mx="auto"
@@ -183,39 +123,6 @@ export default function Chat(props: { apiKeyApp: string }) {
             mb="20px"
             borderRadius="60px"
           >
-            <Flex
-              cursor={'pointer'}
-              transition="0.3s"
-              justify={'center'}
-              align="center"
-              bg={model === 'gpt-4o' ? buttonBg : 'transparent'}
-              w="174px"
-              h="70px"
-              boxShadow={model === 'gpt-4o' ? buttonShadow : 'none'}
-              borderRadius="14px"
-              color={textColor}
-              fontSize="18px"
-              fontWeight={'700'}
-              onClick={() => setModel('gpt-4o')}
-            >
-              <Flex
-                borderRadius="full"
-                justify="center"
-                align="center"
-                bg={bgIcon}
-                me="10px"
-                h="39px"
-                w="39px"
-              >
-                <Icon
-                  as={MdAutoAwesome}
-                  width="20px"
-                  height="20px"
-                  color={iconColor}
-                />
-              </Flex>
-              GPT-4o
-            </Flex>
             <Flex
               cursor={'pointer'}
               transition="0.3s"
@@ -247,7 +154,7 @@ export default function Chat(props: { apiKeyApp: string }) {
                   color={iconColor}
                 />
               </Flex>
-              GPT-3.5
+              PD Coach
             </Flex>
           </Flex>
 
@@ -260,11 +167,6 @@ export default function Chat(props: { apiKeyApp: string }) {
                 _hover={{ border: '0px solid', bg: 'none' }}
                 _focus={{ border: '0px solid', bg: 'none' }}
               >
-                <Box flex="1" textAlign="left">
-                  <Text color={gray} fontWeight="500" fontSize="sm">
-                    No plugins added
-                  </Text>
-                </Box>
                 <AccordionIcon color={gray} />
               </AccordionButton>
               <AccordionPanel mx="auto" w="max-content" p="0px 0px 10px 0px">
@@ -274,7 +176,7 @@ export default function Chat(props: { apiKeyApp: string }) {
                   fontSize="sm"
                   textAlign={'center'}
                 >
-                  This is a cool text example.
+                  Inteligência Artificial do Projeto Desenvolve.
                 </Text>
               </AccordionPanel>
             </AccordionItem>
@@ -374,7 +276,7 @@ export default function Chat(props: { apiKeyApp: string }) {
             _focus={{ borderColor: 'none' }}
             color={inputColor}
             _placeholder={placeholderColor}
-            placeholder="Type your message here..."
+            placeholder="Escreva sua pergunta aqui..."
             onChange={handleChange}
           />
           <Button
@@ -397,7 +299,7 @@ export default function Chat(props: { apiKeyApp: string }) {
             onClick={handleTranslate}
             isLoading={loading ? true : false}
           >
-            Submit
+            Enviar
           </Button>
         </Flex>
 
@@ -408,19 +310,9 @@ export default function Chat(props: { apiKeyApp: string }) {
           alignItems="center"
         >
           <Text fontSize="xs" textAlign="center" color={gray}>
-            Free Research Preview. ChatGPT may produce inaccurate information
-            about people, places, or facts.
+            Estamos empolgados em apresentar o <strong>PD Coach</strong>, uma ferramenta baseada em inteligência artificial que visa auxiliar os alunos no processo de aprendizado através de interações personalizadas.
+            O PD Coach está sendo testado para fornecer feedback em tempo real e suporte em várias disciplinas. Essa é uma fase experimental, onde estamos aprimorando a precisão e a relevância das respostas fornecidas.
           </Text>
-          <Link href="https://help.openai.com/en/articles/6825453-chatgpt-release-notes">
-            <Text
-              fontSize="xs"
-              color={textColor}
-              fontWeight="500"
-              textDecoration="underline"
-            >
-              ChatGPT May 12 Version
-            </Text>
-          </Link>
         </Flex>
       </Flex>
     </Flex>
