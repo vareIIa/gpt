@@ -54,9 +54,10 @@ function SidebarContent(props: SidebarContent) {
   const gray = useColorModeValue('gray.500', 'white');
   // SIDEBAR
   return (
-
+    <Box>
     <Image src={Logo} alt="Logo" style={{maxWidth: "200px", margin: 25}} />
-    
+
+    </Box>
   );
   
 }

@@ -113,9 +113,7 @@ export default function AdminNavbar(props: {
           <Breadcrumb>
            
             <BreadcrumbItem color={secondaryText} fontSize="sm">
-              <BreadcrumbLink href="#" color={secondaryText}>
-                {brandText}
-              </BreadcrumbLink>
+
             </BreadcrumbItem>
           </Breadcrumb>
           {/* Here we create navbar brand, based on route name */}
