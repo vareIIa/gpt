@@ -72,8 +72,9 @@ function Chatbot() {
           placeholder="Digite sua mensagem..."
           size="sm"
           mr="2"
+          style={{borderColor: 'linear-gradient(15.46deg, #4A25E1 26.3%, #7B5AFF'}}
         />
-        <Button onClick={handleSend} colorScheme="blue" size="sm">Enviar</Button>
+        <Button style={{fontSize: 13 ,background: 'linear-gradient(15.46deg, #4A25E1 26.3%, #7B5AFF'}} onClick={handleSend} colorScheme="blue" size="sm">Enviar</Button>
       </Box>
     </Box>
   );

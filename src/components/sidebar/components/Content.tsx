@@ -55,8 +55,9 @@ function SidebarContent(props: SidebarContent) {
   // SIDEBAR
   return (
     <Box>
-    <Image src={Logo} alt="Logo" style={{maxWidth: "200px", margin: 25}} />
-
+    <a href="https://apps.projetodesenvolve.online/authn/login">
+  <Image src={Logo} alt="Logo" style={{ maxWidth: "200px", margin: 25 }} />
+</a>
     </Box>
   );
   

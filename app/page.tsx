@@ -308,6 +308,7 @@ export default function Chat() {
           mt="20px"
           direction={{ base: 'column', md: 'row' }}
           alignItems="center"
+          
         >
           <Text fontSize="xs" textAlign="center" color={gray}>
             Estamos empolgados em apresentar o <strong>PD Coach</strong>, uma ferramenta baseada em inteligência artificial que visa auxiliar os alunos no processo de aprendizado através de interações personalizadas.

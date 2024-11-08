@@ -70,6 +70,7 @@ export default function Footer() {
 
       {/* Botão para abrir/fechar o chatbot no canto inferior direito */}
       <IconButton
+        style={{background: 'linear-gradient(15.46deg, #4A25E1 26.3%, #7B5AFF'}} // Cor de fundo do botão
         ref={buttonRef} // Referência ao botão de ajuda
         icon={<FiHelpCircle />}
         aria-label="Abrir Suporte"
