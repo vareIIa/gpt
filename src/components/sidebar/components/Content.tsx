@@ -55,9 +55,32 @@ function SidebarContent(props: SidebarContent) {
   // SIDEBAR
   return (
     <Box>
+    
     <a href="https://apps.projetodesenvolve.online/authn/login">
   <Image src={Logo} alt="Logo" style={{ maxWidth: "200px", margin: 25 }} />
 </a>
+<Flex align="center" w="100%" marginTop={10} >
+                <Icon
+                  as={MdOutlineManageAccounts}
+                  width="24px"
+                  height="24px"
+                  color={gray}
+                  me="12px"
+                  opacity={'0.9 '}
+                />
+
+                <a href='https://apps.projetodesenvolve.online/profile/u/admin'> 
+                <Text
+                  color={gray}
+                  fontWeight="500"
+                  fontSize="sm"
+                  opacity={'0.9'}
+                >
+                  Configurar Perfil
+                </Text>
+                </a>
+           
+              </Flex>
     </Box>
   );
   
