@@ -2,6 +2,7 @@
 /*eslint-disable*/
 
 import Link from '@/components/link/Link';
+import SidebarContent from '@/components/sidebar/components/Content';
 import MessageBoxChat from '@/components/MessageBox';
 import { ChatBody, OpenAIModel } from '@/types/types';
 import {

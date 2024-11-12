@@ -20,25 +20,25 @@ function Chatbot() {
     setMessages(newMessages);
     setInput("");
 
-    // Simula a resposta do bot com um atraso
+    
     setTimeout(() => {
       const botResponse = getBotResponse(input);
       setMessages((prevMessages) => [
         ...prevMessages,
         { text: botResponse, sender: "bot" },
       ]);
-    }, 1000); // 1000ms = 1 segundo de atraso
+    }, 1000); // 1000ms 
   };
 
   const getBotResponse = (message) => {
-    // Converte a mensagem para minúsculas para facilitar a correspondência
+    
     const lowerMessage = message.toLowerCase();
 
-    // Lógica melhorada para capturar variações de perguntas
+    
     if (lowerMessage.includes("olá") || lowerMessage.includes("oi")) {
       return "Oi! Como posso te ajudar?";
     } else if (lowerMessage.includes("ajuda")) {
-      return "Claro! Em que posso te ajudar? Se você precisar de informações ou tiver dúvidas, estou à disposição.";
+      return <a>Claro! Em que posso te ajudar? Se você precisar de informações ou tiver dúvidas mas pessoais/técnicas, entre em contato com o nosso suporte pelo <strong><a href='https://ajuda-projetodesenvolve.freshdesk.com/support/login'>LINK.</a></strong></a>;
     } else if (lowerMessage.includes("quem é você") || lowerMessage.includes("quem é")) {
       return "Eu sou um chatbot criado para te ajudar com informações e dúvidas. Como posso te ajudar hoje?";
     } else if (lowerMessage.includes("tempo") || lowerMessage.includes("clima")) {
