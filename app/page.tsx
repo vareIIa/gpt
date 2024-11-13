@@ -2,7 +2,6 @@
 /*eslint-disable*/
 
 import Link from '@/components/link/Link';
-import SidebarContent from '@/components/sidebar/components/Content';
 import MessageBoxChat from '@/components/MessageBox';
 import { ChatBody, OpenAIModel } from '@/types/types';
 import {
@@ -19,10 +18,16 @@ import {
   Input,
   Text,
   useColorModeValue,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
 import { MdAutoAwesome, MdBolt, MdEdit, MdPerson } from 'react-icons/md';
 import Bg from '../public/img/chat/bg-image.png';
+import cursos from '../app/api/api.json';
 
 export default function Chat() {
   // Input States
@@ -54,6 +59,18 @@ export default function Chat() {
     { color: 'gray.500' },
     { color: 'whiteAlpha.600' },
   );
+
+  interface Cursos {
+    name: string;
+    link: string;
+    contexto: string; // Usando 'contexto' conforme está no JSON
+  }
+
+  const [cursosList, setCursosList] = useState<Cursos[]>([]);
+
+  useEffect(() => {
+    setCursosList(cursos); // Define o JSON no estado cursosList
+  }, []);
 
   const handleTranslate = async () => {
     setInputOnSubmit(inputCode);
@@ -91,7 +108,7 @@ export default function Chat() {
       setOutputCode(coachAnswer);
     } catch (error) {
       setLoading(false);
-      
+
     }
 
     setLoading(false);
@@ -99,6 +116,41 @@ export default function Chat() {
 
   const handleChange = (Event: any) => {
     setInputCode(Event.target.value);
+  };
+
+  const handleCoursePresentation = async (contexto: string) => {
+    setInputOnSubmit(contexto);  // Exibe o contexto no campo de entrada
+    setInputCode(contexto);  // Define a entrada como o contexto do curso
+    setLoading(true);  // Ativa o estado de carregamento enquanto espera pela resposta
+
+    const payload = {
+      message: contexto,  // Passa o contexto como a mensagem a ser enviada para a API
+    };
+
+    try {
+      const response = await fetch('http://147.79.111.214:5000/chatbot/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': 'b7fe1fd2-7074-4ae0-95ec-23f637695b87',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        setLoading(false);
+        alert('Falha na comunicação com o coach de IA.');
+        return;
+      }
+
+      const data = await response.json();
+      const coachAnswer = data.response || 'Sem resposta';
+      setOutputCode(coachAnswer);  // Exibe a resposta da API
+      setLoading(false);  // Desativa o carregamento
+    } catch (error) {
+      setLoading(false);
+      alert('Ocorreu um erro ao tentar enviar a pergunta.');
+    }
   };
 
   return (
@@ -158,30 +210,88 @@ export default function Chat() {
               PD Coach
             </Flex>
           </Flex>
+          <Text
+
+            color={'black'}
+            fontWeight="500"
+            fontSize="sm"
+            textAlign={'center'}
+          >
+            Menu
+          </Text>
 
           <Accordion color={gray} allowToggle w="100%" my="0px" mx="auto">
-            <AccordionItem border="none">
-              <AccordionButton
-                borderBottom="0px solid"
-                maxW="max-content"
-                mx="auto"
-                _hover={{ border: '0px solid', bg: 'none' }}
-                _focus={{ border: '0px solid', bg: 'none' }}
+  <AccordionItem border="none" position="relative">
+    <AccordionButton
+      borderBottom="0px solid"
+      maxW="max-content"
+      mx="auto"
+      _hover={{ border: '0px solid', bg: 'none' }}
+      _focus={{ border: '0px solid', bg: 'none' }}
+      zIndex="20" // Garante que o botão continue acima do painel
+    >
+      <AccordionIcon color={gray} />
+    </AccordionButton>
+    <AccordionPanel
+      position="absolute"
+      top="30px" // Ajuste conforme necessário para alinhamento
+      left="50%"
+      transform="translateX(-50%)" // Centraliza o painel horizontalmente
+      width="90%" // Expande o painel próximo da largura do contêiner pai
+      maxW="300px" // Define uma largura máxima para o painel
+      zIndex="10" 
+      bg="whiteAlpha.900" 
+      p="10px" 
+      borderRadius="md"
+      boxShadow="lg"
+    >
+      <Text
+        color={'black'}
+        fontWeight="500"
+        fontSize="sm"
+        textAlign={'center'}
+      >
+        Interface PD Coach
+      </Text>
+      <Text
+        color={gray}
+        fontWeight="500"
+        fontSize="sm"
+        textAlign={'center'}
+      >
+        Aprenda sobre suas matérias
+      </Text>
+      <Box>
+        {cursosList.map((course, index) => (
+          <Flex key={index} style={{ marginBottom: 5 }}>
+            <Menu>
+              <MenuButton
+                as={Button}
+                rightIcon={<ChevronDownIcon />}
+                marginTop={index === 0 ? 5 : 0}
+                width="30vw"
+                fontSize="sm"
               >
-                <AccordionIcon color={gray} />
-              </AccordionButton>
-              <AccordionPanel mx="auto" w="max-content" p="0px 0px 10px 0px">
-                <Text
-                  color={gray}
-                  fontWeight="500"
-                  fontSize="sm"
-                  textAlign={'center'}
-                >
-                  Inteligência Artificial do Projeto Desenvolve.
-                </Text>
-              </AccordionPanel>
-            </AccordionItem>
-          </Accordion>
+                {course.name}
+              </MenuButton>
+              <MenuList>
+                <MenuItem>
+                  <a href={course.link} target="_blank" rel="noopener noreferrer">
+                    Ir para o curso
+                  </a>
+                </MenuItem>
+                <MenuItem onClick={() => handleCoursePresentation(course.contexto)}>
+                  Apresentação Curso
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Flex>
+        ))}
+      </Box>
+    </AccordionPanel>
+  </AccordionItem>
+</Accordion>
+
         </Flex>
         {/* Main Box */}
         <Flex
@@ -192,50 +302,8 @@ export default function Chat() {
           mb={'auto'}
         >
           <Flex w="100%" align={'center'} mb="10px">
-            <Flex
-              borderRadius="full"
-              justify="center"
-              align="center"
-              bg={'transparent'}
-              border="1px solid"
-              borderColor={borderColor}
-              me="20px"
-              h="40px"
-              minH="40px"
-              minW="40px"
-            >
-              <Icon
-                as={MdPerson}
-                width="20px"
-                height="20px"
-                color={brandColor}
-              />
-            </Flex>
-            <Flex
-              p="22px"
-              border="1px solid"
-              borderColor={borderColor}
-              borderRadius="14px"
-              w="100%"
-              zIndex={'2'}
-            >
-              <Text
-                color={textColor}
-                fontWeight="600"
-                fontSize={{ base: 'sm', md: 'md' }}
-                lineHeight={{ base: '24px', md: '26px' }}
-              >
-                {inputOnSubmit}
-              </Text>
-              <Icon
-                cursor="pointer"
-                as={MdEdit}
-                ms="auto"
-                width="20px"
-                height="20px"
-                color={gray}
-              />
-            </Flex>
+            
+
           </Flex>
           <Flex w="100%">
             <Flex
@@ -309,7 +377,7 @@ export default function Chat() {
           mt="20px"
           direction={{ base: 'column', md: 'row' }}
           alignItems="center"
-          
+
         >
           <Text fontSize="xs" textAlign="center" color={gray}>
             Estamos empolgados em apresentar o <strong>PD Coach</strong>, uma ferramenta baseada em inteligência artificial que visa auxiliar os alunos no processo de aprendizado através de interações personalizadas.
@@ -317,6 +385,7 @@ export default function Chat() {
           </Text>
         </Flex>
       </Flex>
+
     </Flex>
   );
 }

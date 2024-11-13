@@ -60,7 +60,24 @@ export default function HeaderLinks(props: {
       borderRadius="30px"
       boxShadow={shadow}
     >
-
+      {/* <Button
+        variant="no-hover"
+        bg="transparent"
+        p="0px"
+        minW="unset"
+        minH="unset"
+        h="18px"
+        w="max-content"
+        onClick={toggleColorMode}
+      >
+        <Icon
+          me="10px"
+          h="18px"
+          w="18px"
+          color={navbarIcon}
+          as={colorMode === 'light' ? IoMdMoon : IoMdSunny}
+        />
+      </Button> */}
       
 
      
